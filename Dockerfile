@@ -22,8 +22,6 @@ ENV PHPIZE_DEPS \
         pkgconf \
         re2c
 
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
-
 # php module
 RUN apk add libmcrypt-dev \
         libxml2-dev \
@@ -75,14 +73,6 @@ RUN apk add --no-cache --virtual .phpize-deps-configure $PHPIZE_DEPS \
     && rm -rf /tmp/pear \
     && apk del .phpize-deps-configure
 
-# swoole_compiler
-COPY ./ext/swoole_loader72.so /usr/local/lib/php/extensions/no-debug-non-zts-20170718/swoole_loader72.so
-# RUN docker-php-ext-enable mediacloud
-RUN touch $PHP_INI_DIR/conf.d/docker-php-ext-swoole_compiler.ini
-RUN echo "[swoole_compiler]" >> $PHP_INI_DIR/conf.d/docker-php-ext-swoole_compiler.ini \
-    && echo "extension=swoole_loader72.so" >> $PHP_INI_DIR/conf.d/docker-php-ext-swoole_compiler.ini \
-    && echo "swoole_license_files=/data/www/Cloud/mediacloud-kitchen/swoole-compiler.licence" >> $PHP_INI_DIR/conf.d/docker-php-ext-swoole_compiler.ini
-
 RUN mv $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini
 RUN sed -i "s|;*date.timezone =.*|date.timezone = ${TIMEZONE}|i" $PHP_INI_DIR/php.ini && \
     sed -i "s|;*memory_limit =.*|memory_limit = ${PHP_MEMORY_LIMIT}|i" $PHP_INI_DIR/php.ini && \
@@ -99,5 +89,4 @@ RUN composer config -g repo.packagist composer https://mirrors.aliyun.com/compos
 
 WORKDIR /data/www
 
-COPY www.conf /usr/local/etc/php-fpm.d/
 CMD ["php-fpm", "-R"]
