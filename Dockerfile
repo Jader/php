@@ -37,8 +37,7 @@ RUN apk add libmcrypt-dev \
         bcmath \
         sockets \
         shmop \
-        sysvsem \
-        opcache
+        sysvsem
 
 # gd
 RUN apk add libwebp-dev \
