@@ -88,7 +88,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ 
 RUN composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
 
 # mingyuanyun
-RUN mkdir -p /webser/data && mkdir -p /webser/logs && mkdir -p /webser/runtime
+RUN mkdir -p /webser/data && mkdir -p /webser/logs && mkdir -p /webser/runtime && chown -R www-data:www-data /webser && chmod 777 /webser
 
 WORKDIR /webser/www
 
