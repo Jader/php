@@ -1,4 +1,4 @@
-FROM php:7.2.19-fpm-alpine3.9
+FROM php:7.1.33-fpm-alpine3.9
 
 LABEL maintainer="Jade <hmy940118@gmail.com>"
 
@@ -28,12 +28,10 @@ RUN apk add libmcrypt-dev \
         libxslt-dev \
     && docker-php-ext-install soap\
         xsl \
+        mcrypt \
         xmlrpc \
         zip \
-        pcntl \
         pdo_mysql \
-        mysqli \
-        exif \
         bcmath \
         sockets \
         shmop \
@@ -55,6 +53,20 @@ RUN apk add libwebp-dev \
 RUN apk add --no-cache --virtual .phpize-deps-configure $PHPIZE_DEPS \
     && printf '\n' | pecl install redis \
     && docker-php-ext-enable redis \
+    && rm -rf /tmp/pear \
+    && apk del .phpize-deps-configure
+
+# amqp
+RUN apk add --no-cache --virtual .phpize-deps-configure $PHPIZE_DEPS \
+    && printf '\n' | pecl install amqp \
+    && docker-php-ext-enable amqp \
+    && rm -rf /tmp/pear \
+    && apk del .phpize-deps-configure
+
+# amqp
+RUN apk add --no-cache --virtual .phpize-deps-configure $PHPIZE_DEPS \
+    && printf '\n' | pecl install memcached \
+    && docker-php-ext-enable memcached \
     && rm -rf /tmp/pear \
     && apk del .phpize-deps-configure
 
