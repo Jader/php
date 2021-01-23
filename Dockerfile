@@ -26,6 +26,7 @@ ENV PHPIZE_DEPS \
 RUN apk add libmcrypt-dev \
         libxml2-dev \
         libxslt-dev \
+        librabbitmq-dev \
     && docker-php-ext-install soap\
         xsl \
         mcrypt \
@@ -36,7 +37,8 @@ RUN apk add libmcrypt-dev \
         sockets \
         shmop \
         sysvsem \
-        opcache
+        opcache \
+        amqp
 
 # gd
 RUN apk add libwebp-dev \
@@ -53,13 +55,6 @@ RUN apk add libwebp-dev \
 RUN apk add --no-cache --virtual .phpize-deps-configure $PHPIZE_DEPS \
     && printf '\n' | pecl install redis \
     && docker-php-ext-enable redis \
-    && rm -rf /tmp/pear \
-    && apk del .phpize-deps-configure
-
-# amqp
-RUN apk add --no-cache --virtual .phpize-deps-configure $PHPIZE_DEPS \
-    && printf '\n' | pecl install amqp \
-    && docker-php-ext-enable amqp \
     && rm -rf /tmp/pear \
     && apk del .phpize-deps-configure
 
