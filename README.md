@@ -1,3 +1,4 @@
 ## 介绍
 
-	ktichen-php 基础基础镜像， swoole_compiler 可移除
+	 master 基础镜像
+     不同分支为对应公司使用镜像

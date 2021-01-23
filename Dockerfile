@@ -51,14 +51,6 @@ RUN apk add libwebp-dev \
         --with-jpeg-dir \
     && docker-php-ext-install gd
 
-# imagick
-RUN apk add --no-cache --virtual .phpize-deps-configure $PHPIZE_DEPS \
-    && apk add imagemagick-dev \
-    && printf '\n' | pecl install imagick \
-    && docker-php-ext-enable imagick \
-    && rm -rf /tmp/pear \
-    && apk del .phpize-deps-configure
-
 # redis
 RUN apk add --no-cache --virtual .phpize-deps-configure $PHPIZE_DEPS \
     && printf '\n' | pecl install redis \
