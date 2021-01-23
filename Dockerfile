@@ -1,4 +1,4 @@
-FROM php:7.1.33-fpm-alpine3.9
+FROM php:7.1.33-fpm-alpine
 
 LABEL maintainer="Jade <hmy940118@gmail.com>"
 
@@ -23,10 +23,11 @@ ENV PHPIZE_DEPS \
         re2c
 
 # php module
-RUN apk add libmcrypt-dev \
+RUN apk add --no-cache libmcrypt-dev \
         libxml2-dev \
         libxslt-dev \
-        librabbitmq-dev \
+        rabbitmq-c-dev \
+        libstdc++ \
     && docker-php-ext-install soap\
         xsl \
         mcrypt \
@@ -37,11 +38,10 @@ RUN apk add libmcrypt-dev \
         sockets \
         shmop \
         sysvsem \
-        opcache \
-        amqp
+        opcache
 
 # gd
-RUN apk add libwebp-dev \
+RUN apk add --no-cache libwebp-dev \
         libpng-dev \
         libjpeg-turbo-dev \
         freetype-dev \
@@ -60,14 +60,15 @@ RUN apk add --no-cache --virtual .phpize-deps-configure $PHPIZE_DEPS \
 
 # amqp
 RUN apk add --no-cache --virtual .phpize-deps-configure $PHPIZE_DEPS \
-    && printf '\n' | pecl install memcached \
-    && docker-php-ext-enable memcached \
+    && printf '\n' | pecl install amqp \
+    && docker-php-ext-enable amqp \
     && rm -rf /tmp/pear \
     && apk del .phpize-deps-configure
 
 # swoole
 RUN apk add --no-cache --virtual .phpize-deps-configure $PHPIZE_DEPS \
-    && printf '\n' | pecl install swoole \
+#    && printf '\n' | pecl install swoole \ php7.1系列使用swoole-4.5系列
+    && printf '\n' | pecl install swoole-4.5.11 \
     && docker-php-ext-enable swoole \
     && rm -rf /tmp/pear \
     && apk del .phpize-deps-configure
@@ -86,6 +87,9 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ 
 # Composer aliyun mirror
 RUN composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
 
-WORKDIR /data/www
+# mingyuanyun
+RUN mkdir -p /webser/data && mkdir -p /webser/logs && mkdir -p /webser/runtime
+
+WORKDIR /webser/www
 
 CMD ["php-fpm", "-R"]
