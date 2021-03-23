@@ -49,6 +49,9 @@ RUN apk add --no-cache libwebp-dev \
         --enable-gd-native-ttf \
         --with-freetype-dir \
         --with-jpeg-dir \
+        --enable-http2   \
+        --enable-openssl \
+        --enable-swoole-json \
     && docker-php-ext-install gd
 
 # redis
