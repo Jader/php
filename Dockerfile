@@ -76,6 +76,14 @@ RUN apk add --no-cache --virtual .phpize-deps-configure $PHPIZE_DEPS \
     && rm -rf /tmp/pear \
     && apk del .phpize-deps-configure
 
+# tideways-xhprof
+RUN apk add --no-cache --virtual .phpize-deps-configure $PHPIZE_DEPS \
+    && printf '\n' | cd /tmp && wget -O tideways.tar.gz https://github.com/tideways/php-xhprof-extension/archive/v5.0.4.tar.gz \
+    && tar xfvz tideways.tar.gz && cd php-xhprof-extension-* && phpize && ./configure && make && make install \
+    && docker-php-ext-enable tideways_xhprof \
+    && rm -rf /tmp/* \
+    && apk del .phpize-deps-configure
+
 RUN mv $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini
 RUN sed -i "s|;*date.timezone =.*|date.timezone = ${TIMEZONE}|i" $PHP_INI_DIR/php.ini && \
     sed -i "s|;*memory_limit =.*|memory_limit = ${PHP_MEMORY_LIMIT}|i" $PHP_INI_DIR/php.ini && \
@@ -83,7 +91,6 @@ RUN sed -i "s|;*date.timezone =.*|date.timezone = ${TIMEZONE}|i" $PHP_INI_DIR/ph
     sed -i "s|;*max_file_uploads =.*|max_file_uploads = ${PHP_MAX_FILE_UPLOAD}|i" $PHP_INI_DIR/php.ini && \
     sed -i "s|;*post_max_size =.*|post_max_size = ${PHP_MAX_POST}|i" $PHP_INI_DIR/php.ini && \
     sed -i "s|;*cgi.fix_pathinfo=.*|cgi.fix_pathinfo= 0|i" $PHP_INI_DIR/php.ini
-
 
 # Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
